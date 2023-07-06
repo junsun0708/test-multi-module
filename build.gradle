@@ -4,33 +4,24 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'com.thingspire'
-version = '0.0.1-SNAPSHOT'
-java {
-	sourceCompatibility = '17'
-}
+//모든 프로젝트 적용
+allprojects {
+	//task('hello').doLast {
+	//	println "i'm $project.name"
+	//}
 
-repositories {
-	mavenCentral()
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+	group = 'com.thingspire'
+	version = '0.0.1-SNAPSHOT'
+	java {
+		sourceCompatibility = '17'
+	}
+	
+	repositories {
+		mavenCentral()
 	}
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
+//서브 프로젝트 전체 적용
 subprojects {
 	apply plugin: 'java'
 	// build.gradle에서 api() 를 사용하려면 java-library 사용
@@ -51,12 +42,36 @@ subprojects {
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
 	}
+	
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+	
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+		testCompileOnly.extendsFrom annotationProcessor
+		testAnnotationProcessor.extendsFrom annotationProcessor
+	}
 }
+
+
+/*
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+
 
 bootJar {
     enabled = false
 }
-
+*/
 /*
 jar {
     enabled = true
@@ -84,7 +99,7 @@ project(':core-module') { // core-module는 bootJar로 패키징 할 필요 없�
 }
 */
 
-
+//여기서도 종석성을 설정가능하지만 프로젝트 관계만 설정하자.
 project(':admin-module') { // 컴파일 시 admin-module 로딩
 	dependencies {
 		api project(':admin-module')

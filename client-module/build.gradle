@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group = 'com.thingspire'
@@ -22,6 +22,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
 
 bootJar {
     enabled = true
