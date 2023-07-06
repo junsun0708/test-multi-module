@@ -1,1 +1,5 @@
 rootProject.name = 'test-multi-module'
+include 'admin-module'
+include 'core-module'
+include 'client-module'
+

@@ -6,19 +6,22 @@ plugins {
 
 group = 'com.thingspire'
 version = '0.0.1-SNAPSHOT'
-
 java {
 	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
 }
 
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 dependencies {
@@ -28,6 +31,75 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+subprojects {
+	apply plugin: 'java'
+	// build.gradle에서 api() 를 사용하려면 java-library 사용
+    apply plugin: 'java-library'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	sourceCompatibility = 17
+	targetCompatibility = 17
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+	}
 }
+
+bootJar {
+    enabled = false
+}
+
+/*
+jar {
+    enabled = true
+}
+
+*/
+
+/*
+//루트는 관계성만 설정한다. 각 디펜던시는 각자에 설정
+project(':admin-module') { // 컴파일 시 admin-module 로딩
+    dependencies {
+        compileOnly project(':admin-module')
+    }
+}
+
+project(':client-module') { // 컴파일 시 mclient-module 로딩
+    dependencies {
+        compileOnly project(':client-module')
+    }
+}
+
+project(':core-module') { // core-module는 bootJar로 패키징 할 필요 없음
+    bootJar { enabled = false }
+    jar { enabled = true }
+}
+*/
+
+
+project(':admin-module') { // 컴파일 시 admin-module 로딩
+	dependencies {
+		api project(':admin-module')
+	}
+}
+
+project(':client-module') { // 컴파일 시 admin-module 로딩
+	dependencies {
+		api project(':client-module')
+	}
+}
+
+project(':core-module') { // 컴파일 시 admin-module 로딩
+	dependencies {
+		api project(':core-module')
+	}
+}
+
