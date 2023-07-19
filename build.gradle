@@ -1,120 +1,69 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.1'
-	id 'io.spring.dependency-management' version '1.1.0'
+	id 'java-library'
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
-
-//모든 프로젝트 적용
+//모든 프로젝트 공통설정
 allprojects {
-	//task('hello').doLast {
-	//	println "i'm $project.name"
-	//}
-
 	group = 'com.thingspire'
 	version = '0.0.1-SNAPSHOT'
+	
 	java {
 		sourceCompatibility = '17'
+		targetCompatibility = '17'
 	}
 	
 	repositories {
 		mavenCentral()
 	}
 }
-
-//서브 프로젝트 전체 적용
+//모듈 프로젝트 공통설정
 subprojects {
-	apply plugin: 'java'
-	// build.gradle에서 api() 를 사용하려면 java-library 사용
     apply plugin: 'java-library'
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 
-	sourceCompatibility = 17
-	targetCompatibility = 17
-
-	repositories {
-		mavenCentral()
+	configurations {
+		compileOnly {
+			annotationProcessor
+		}
 	}
 
-	dependencies {
-		implementation 'org.springframework.boot:spring-boot-starter'
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		compileOnly 'org.projectlombok:lombok'
-		annotationProcessor 'org.projectlombok:lombok'
-	}
-	
 	tasks.named('test') {
 		useJUnitPlatform()
 	}
 	
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-		testCompileOnly.extendsFrom annotationProcessor
-		testAnnotationProcessor.extendsFrom annotationProcessor
+	dependencies {
+		compileOnly 'org.projectlombok:lombok'
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+		annotationProcessor 'org.projectlombok:lombok'
 	}
 }
-
-
-/*
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-
-
+//root는 빌드 안함.
 bootJar {
     enabled = false
 }
-*/
-/*
 jar {
-    enabled = true
+    enabled = false
 }
-
-*/
-
-/*
-//루트는 관계성만 설정한다. 각 디펜던시는 각자에 설정
-project(':admin-module') { // 컴파일 시 admin-module 로딩
+//모듈간 관계설정. - 각 모듈에 특화된 종속성은 각 프로젝트에서 처리한다.
+project(':admin-module') {
     dependencies {
-        compileOnly project(':admin-module')
+     api project(':core-module')
     }
 }
 
-project(':client-module') { // 컴파일 시 mclient-module 로딩
+project(':client-module') {
     dependencies {
-        compileOnly project(':client-module')
+        //api project(':adapt-base')
     }
 }
 
-project(':core-module') { // core-module는 bootJar로 패키징 할 필요 없음
-    bootJar { enabled = false }
-    jar { enabled = true }
-}
-*/
-
-//여기서도 종석성을 설정가능하지만 프로젝트 관계만 설정하자.
-project(':admin-module') { // 컴파일 시 admin-module 로딩
-	dependencies {
-		api project(':admin-module')
-	}
+project(':core-module') {
+    dependencies {
+        //api project(':core-module') 
+    }
 }
 
-project(':client-module') { // 컴파일 시 admin-module 로딩
-	dependencies {
-		api project(':client-module')
-	}
-}
-
-project(':core-module') { // 컴파일 시 admin-module 로딩
-	dependencies {
-		api project(':core-module')
-	}
-}
 
