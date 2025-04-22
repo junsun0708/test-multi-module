@@ -50,7 +50,7 @@ jar {
 //모듈간 관계설정. - 각 모듈에 특화된 종속성은 각 프로젝트에서 처리한다.
 project(':admin-module') {
     dependencies {
-     api project(':core-module')
+     	api project(':core-module')
     }
 }
 

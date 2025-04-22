@@ -1,0 +1,4 @@
+rootProject.name = 'core-module'
+include 'core-module-1'
+include 'core-module-2'
+
